@@ -11,7 +11,8 @@ public:
 
     Controller();
     ~Controller();
-    void search();
+    QList<QString> search(QString path);
+    QList<QString> getFilesDirectory(QString path);
     void loadHist(QList<QString> list);
     void insertImages(QList<QString> list);
 

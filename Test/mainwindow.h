@@ -15,6 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include "controller.h"
 
 
 namespace Ui {
@@ -28,12 +29,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QList<QString> getFilesDirectory();
+    QString getDirectoryPath();
+    QList<QString> getFilesDirectory(QString path);
     QString getFile();
     void showImages(QList<QString>);
 
 private:
     Ui::MainWindow *ui;
+    Controller *controller;
 
 
 public slots:

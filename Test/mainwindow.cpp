@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 #include <iostream>
 
 using namespace std;
@@ -15,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionExit,SIGNAL(triggered()),this,SLOT(exit()));
     connect(this->ui->chooseDirectory,SIGNAL(clicked()),this,SLOT(chooseImage()));
 
-
+    controller = new Controller();
 }
 
 MainWindow::~MainWindow()
@@ -24,6 +25,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::loadImages(){
+
+    QList<QString> images = getFilesDirectory(getDirectoryPath());
+    controller->insertImages(images);
 
 }
 void MainWindow::exit(){
@@ -35,14 +39,27 @@ void MainWindow::chooseImage(){
     cout <<  path.toStdString() << endl;
 
 }
+
 QString MainWindow::getFile(){
     return QFileDialog::getOpenFileName(this,tr("Directory"),NULL,tr("All files (*.*);;JPEG (*.jpg *.jpeg);;PNG (*.png)" ));
 }
 
+/**
+ * Returns a selected directory path.
+ *
+ * @brief MainWindow::getDirectoryPath
+ * @return
+ */
+
+QString MainWindow::getDirectoryPath() {
+
+}
+
+
+
 void MainWindow::showImages(QList<QString> filesList){
     QWidget *imagesWidget = new QWidget();
     QGridLayout *grid = ui->gridLayout;
-
 
     QImage copy;
     QString tempFileName;
