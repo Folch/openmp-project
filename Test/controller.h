@@ -4,6 +4,7 @@
 #include <qstring.h>
 #include <QList>
 #include <dirent.h>
+#include "histogram.h"
 
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"
@@ -20,7 +21,9 @@ public:
     void insertImages(QList<QString> list);
 
 private:
-    //QList<histogram> histograms;
+    QList<Histogram*> *histograms;
+    QList<QString> *imagesPaths;
+    int id;
 };
 
 #endif // CONTROLLER_H

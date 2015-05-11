@@ -2,8 +2,16 @@
 
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
-
+    id=1;
     //loadHist(list);
+}
+
+QString IdToString(int id) {
+
+}
+
+Histogram* getHistogram(int id) {
+
 }
 
 void Controller::insertImages(QList<QString> list) {
