@@ -16,8 +16,12 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include "controller.h"
+#include "ui_mainwindow.h"
+#include <iostream>
+#include <dirent.h>
 
-
+using namespace std;
+using namespace cv;
 namespace Ui {
 class MainWindow;
 }
@@ -30,7 +34,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QString getDirectoryPath();
-    QList<QString> getFilesDirectory(QString path);
+    QList<QString>* getFilesDirectory(QString path);
     QString getFile();
     void showImages(QList<QString>);
 

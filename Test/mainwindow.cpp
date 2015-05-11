@@ -1,11 +1,5 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
-
-#include <iostream>
-
-using namespace std;
-using namespace cv;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,10 +20,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadImages(){
 
-    QList<QString> images = getFilesDirectory(getDirectoryPath());
-    controller->insertImages(images);
+    QList<QString> *images = getFilesDirectory(getDirectoryPath());
+    controller->insertImages(*images);
 
 }
+QList<QString>* MainWindow::getFilesDirectory(QString path){
+    DIR *dpdf;
+    struct dirent *epdf;
+    QList<QString> *images = new QList<QString>();
+    //dpdf = opendir("./");
+    dpdf = opendir(path.toLatin1().data());
+    if (dpdf != NULL){
+       while ((epdf = readdir(dpdf))){
+
+           //cout<<"Filename: "<< epdf->d_name;
+          std::cout << epdf->d_name << std::endl;
+          images->append( QString(QLatin1String(epdf->d_name)));
+       }
+    }
+    return images;
+}
+
 void MainWindow::exit(){
     std::exit(0);
 }
@@ -52,7 +63,7 @@ QString MainWindow::getFile(){
  */
 
 QString MainWindow::getDirectoryPath() {
-
+    return "/home/afolchga8.alumnes/openmp-project/Test";
 }
 
 

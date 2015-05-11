@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <qstring.h>
+#include <QList>
 class Controller
 {
 public:

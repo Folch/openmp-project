@@ -3,6 +3,7 @@
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
 
+    //loadHist(list);
 }
 
 void Controller::insertImages(QList<QString> list) {
@@ -22,7 +23,7 @@ QList<QString> Controller::search(QString path) {
 
 }
 
-Controller::loadHist(QList<QString> list) {
+void Controller::loadHist(QList<QString> list) {
 
 }
 
