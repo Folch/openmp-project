@@ -12,7 +12,7 @@ using namespace std;
 
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"
-#define XNUMBER 6;
+#define XNUMBER 6
 
 class Controller
 {
@@ -22,8 +22,8 @@ public:
     ~Controller();
     QList<QString> *search(QString path);
     QList<QString> *getFilesDirectory(QString path);
-    void loadHist(QList<QString> list);
-    void insertImages(QList<QString> list);
+    void loadHist(QList<QString> *list);
+    void insertImages(QList<QString> *list);
 
 private:
     QList<Histogram*> *histograms;

@@ -21,7 +21,7 @@ MainWindow::~MainWindow()
 void MainWindow::loadImages(){
 
     QList<QString> *images = controller->getFilesDirectory(getDirectoryPath());
-    controller->insertImages(*images);
+    controller->insertImages(images);
 
 }
 

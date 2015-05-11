@@ -3,8 +3,8 @@
 QString IdToString(int id) {
     int len = log10(id);
     len++;
-    QString out;
     len = XNUMBER - len;
+    QString out;
     for (int i = 0; i < len; ++i)
         out.append("0");
 
@@ -14,7 +14,8 @@ QString IdToString(int id) {
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
     id=1;
-    //loadHist(list);
+    QList<QString> *list = getFilesDirectory(HIST_PATH);
+    loadHist(list);
 }
 
 
@@ -33,7 +34,7 @@ Histogram* getHistogram(int id) {
 }
 
 void storeHistogram(int id, Histogram* h) {
-    QString path = HIST_PATH + "hist_" + IdToString(id) + ".xml";
+    QString path = QString(HIST_PATH) + QString("hist_") + IdToString(id) + ".xml";
     FileStorage fs(path.toLatin1().toStdString(), FileStorage::WRITE);
 
     fs << "hist_h" << h->hist_h;
@@ -43,7 +44,7 @@ void storeHistogram(int id, Histogram* h) {
     fs.release();
 }
 
-void Controller::insertImages(QList<QString> list) {
+void Controller::insertImages(QList<QString> *list) {
     /*Hem de crear la carpeta 'img/' i 'hist/' si no està creada*/
 
 
@@ -60,8 +61,11 @@ QList<QString> *Controller::search(QString path) {
 
 }
 
-void Controller::loadHist(QList<QString> list) {
-
+void Controller::loadHist(QList<QString> *list) {
+    histograms = new QList<Histogram*>;
+    for (id = 1; id <= list->size(); ++id) {
+        histograms->append(getHistogram(id));
+    }
 }
 
 /**
