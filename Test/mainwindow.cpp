@@ -21,7 +21,7 @@ MainWindow::~MainWindow()
 void MainWindow::loadImages(){
 
     QList<QString> *images = controller->getFilesDirectory(getDirectoryPath());
-    controller->insertImages(*images);
+    controller->insertImages(images);
 
 }
 
@@ -48,7 +48,7 @@ QString MainWindow::getFile(){
  */
 
 QString MainWindow::getDirectoryPath() {
-    return "/home/afolchga8.alumnes/openmp-project/Test";
+    return "/home/afolchga8.alumnes/openmp-project/Test-build-desktop-Qt_4_8_2_in_PATH__System__Debug/images";
 }
 
 

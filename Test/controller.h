@@ -5,10 +5,15 @@
 #include <QList>
 #include <dirent.h>
 #include "histogram.h"
+#include <sys/stat.h>
 
+#include <stdlib.h>
+#include <iostream>
+#include <QStringList>
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"
 
+using namespace std;
 class Controller
 {
 public:
@@ -18,7 +23,7 @@ public:
     QList<QString> *search(QString path);
     QList<QString> *getFilesDirectory(QString path);
     void loadHist(QList<QString> list);
-    void insertImages(QList<QString> list);
+    void insertImages(QList<QString> *list);
 
 private:
     QList<Histogram*> *histograms;
