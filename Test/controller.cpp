@@ -7,11 +7,20 @@ Controller::Controller() {
 }
 
 QString IdToString(int id) {
-
+    return "1";
 }
 
 Histogram* getHistogram(int id) {
 
+    Mat hist_h, hist_s, hist_v;
+    QString path = "hist_"+IdToString(id);
+    FileStorage fs(path.toLatin1().toStdString(), FileStorage::READ);
+
+    fs ["hist_h"] >> hist_h;
+    fs ["hist_s"] >> hist_s;
+    fs ["hist_v"] >> hist_v;
+
+    return new Histogram(hist_h, hist_s, hist_v);
 }
 
 void Controller::insertImages(QList<QString> list) {
@@ -36,7 +45,7 @@ void Controller::loadHist(QList<QString> list) {
 }
 
 /**
- * Returns a set of files given a directory path.
+ * Returns a set of absolute path of files given a directory path.
  *
  * @brief MainWindow::getFilesDirectory
  * @return
@@ -51,7 +60,7 @@ QList<QString>* Controller::getFilesDirectory(QString path){
     if (dpdf != NULL){
        while ((epdf = readdir(dpdf))){
           //std::cout << epdf->d_name << std::endl;
-          images->append( QString(QLatin1String(epdf->d_name)));
+          images->append( path+"/"+QString(QLatin1String(epdf->d_name)));
        }
     }
     return images;
