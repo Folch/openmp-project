@@ -1,24 +1,56 @@
 #include "controller.h"
 
+QString IdToString(int id) {
+    int len = log10(id);
+    len++;
+    len = XNUMBER - len;
+    QString out;
+    for (int i = 0; i < len; ++i)
+        out.append("0");
+
+    return out+QString::number(id);
+}
+
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
     id=1;
-    //loadHist(list);
+    QList<QString> *list = getFilesDirectory(HIST_PATH);
+    loadHist(list);
 }
 
-QString IdToString(int id) {
 
-}
 
 Histogram* getHistogram(int id) {
 
+    Mat hist_h, hist_s, hist_v;
+    QString path = "hist_"+IdToString(id);
+    FileStorage fs(path.toLatin1().data(), FileStorage::READ);
+
+    fs ["hist_h"] >> hist_h;
+    fs ["hist_s"] >> hist_s;
+    fs ["hist_v"] >> hist_v;
+
+    return new Histogram(hist_h, hist_s, hist_v);
 }
+
 
 Histogram* createHistogram(QString path) {
 
 }
 
-void Controller::insertImages(QList<QString>* list) {
+void storeHistogram(int id, Histogram* h) {
+    QString path = QString(HIST_PATH) + QString("hist_") + IdToString(id) + ".xml";
+    FileStorage fs(path.toLatin1().data(), FileStorage::WRITE);
+
+    fs << "hist_h" << h->hist_h;
+    fs << "hist_s" << h->hist_s;
+    fs << "hist_v" << h->hist_v;
+
+    fs.release();
+}
+
+void Controller::insertImages(QList<QString> *list) {
+
     /*Hem de crear la carpeta 'img/' i 'hist/' si no està creada*/
     DIR *imgdir = opendir(IMG_PATH);
     DIR *histdir = opendir(HIST_PATH);
@@ -61,12 +93,15 @@ QList<QString> *Controller::search(QString path) {
 
 }
 
-void Controller::loadHist(QList<QString> list) {
-
+void Controller::loadHist(QList<QString> *list) {
+    histograms = new QList<Histogram*>;
+    for (id = 1; id <= list->size(); ++id) {
+        histograms->append(getHistogram(id));
+    }
 }
 
 /**
- * Returns a set of files given a directory path.
+ * Returns a set of absolute path of files given a directory path.
  *
  * @brief MainWindow::getFilesDirectory
  * @return
@@ -81,10 +116,12 @@ QList<QString>* Controller::getFilesDirectory(QString path){
     if (dpdf != NULL){
        while ((epdf = readdir(dpdf))){
 
+
           if(epdf->d_name[0] == '.')
               continue;
            std::cout << epdf->d_name << std::endl;
           images->append(path+"/"+ QString(QLatin1String(epdf->d_name)));
+
        }
     }
     return images;
