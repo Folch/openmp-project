@@ -9,7 +9,6 @@ class Histogram
 public:
     Histogram(Mat hist_h, Mat hist_s, Mat hist_v);
     ~Histogram();
-private:
     Mat hist_h;
     Mat hist_s;
     Mat hist_v;

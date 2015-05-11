@@ -1,14 +1,23 @@
 #include "controller.h"
 
+QString IdToString(int id) {
+    int len = log10(id);
+    len++;
+    QString out;
+    len = XNUMBER - len;
+    for (int i = 0; i < len; ++i)
+        out.append("0");
+
+    return out+QString::number(id);
+}
+
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
     id=1;
     //loadHist(list);
 }
 
-QString IdToString(int id) {
-    return "1";
-}
+
 
 Histogram* getHistogram(int id) {
 
@@ -21,6 +30,17 @@ Histogram* getHistogram(int id) {
     fs ["hist_v"] >> hist_v;
 
     return new Histogram(hist_h, hist_s, hist_v);
+}
+
+void storeHistogram(int id, Histogram* h) {
+    QString path = HIST_PATH + "hist_" + IdToString(id) + ".xml";
+    FileStorage fs(path.toLatin1().toStdString(), FileStorage::WRITE);
+
+    fs << "hist_h" << h->hist_h;
+    fs << "hist_s" << h->hist_s;
+    fs << "hist_v" << h->hist_v;
+
+    fs.release();
 }
 
 void Controller::insertImages(QList<QString> list) {

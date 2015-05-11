@@ -5,10 +5,14 @@
 #include <QList>
 #include <dirent.h>
 #include "histogram.h"
+#include <math.h>
+#include <iostream>
 
+using namespace std;
 
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"
+#define XNUMBER 6;
 
 class Controller
 {
