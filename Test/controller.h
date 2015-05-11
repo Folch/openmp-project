@@ -3,17 +3,19 @@
 
 #include <qstring.h>
 #include <QList>
+#include <dirent.h>
+
+#define IMG_PATH "./img/"
+#define HIST_PATH "./hist/"
+
 class Controller
 {
 public:
-    const QString IMG_PATH = "./img/";
-    const QString HIST_PATH = "./hist/";
-
 
     Controller();
     ~Controller();
-    QList<QString> search(QString path);
-    QList<QString> getFilesDirectory(QString path);
+    QList<QString> *search(QString path);
+    QList<QString> *getFilesDirectory(QString path);
     void loadHist(QList<QString> list);
     void insertImages(QList<QString> list);
 

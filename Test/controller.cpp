@@ -19,7 +19,7 @@ void Controller::insertImages(QList<QString> list) {
 
 }
 
-QList<QString> Controller::search(QString path) {
+QList<QString> *Controller::search(QString path) {
 
 }
 
@@ -34,8 +34,19 @@ void Controller::loadHist(QList<QString> list) {
  * @return
  */
 
-QList<QString> Controller::getFilesDirectory(QString path) {
-
+QList<QString>* Controller::getFilesDirectory(QString path){
+    DIR *dpdf;
+    struct dirent *epdf;
+    QList<QString> *images = new QList<QString>();
+    //dpdf = opendir("./");
+    dpdf = opendir(path.toLatin1().data());
+    if (dpdf != NULL){
+       while ((epdf = readdir(dpdf))){
+          //std::cout << epdf->d_name << std::endl;
+          images->append( QString(QLatin1String(epdf->d_name)));
+       }
+    }
+    return images;
 }
 
 Controller::~Controller()

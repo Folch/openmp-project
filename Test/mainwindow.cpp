@@ -20,26 +20,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadImages(){
 
-    QList<QString> *images = getFilesDirectory(getDirectoryPath());
+    QList<QString> *images = controller->getFilesDirectory(getDirectoryPath());
     controller->insertImages(*images);
 
 }
-QList<QString>* MainWindow::getFilesDirectory(QString path){
-    DIR *dpdf;
-    struct dirent *epdf;
-    QList<QString> *images = new QList<QString>();
-    //dpdf = opendir("./");
-    dpdf = opendir(path.toLatin1().data());
-    if (dpdf != NULL){
-       while ((epdf = readdir(dpdf))){
 
-           //cout<<"Filename: "<< epdf->d_name;
-          std::cout << epdf->d_name << std::endl;
-          images->append( QString(QLatin1String(epdf->d_name)));
-       }
-    }
-    return images;
-}
 
 void MainWindow::exit(){
     std::exit(0);
