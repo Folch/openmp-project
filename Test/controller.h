@@ -16,6 +16,8 @@ using namespace std;
 #include <stdlib.h>
 #include <iostream>
 #include <QStringList>
+#include <quicksort.h>
+
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"
 #define XNUMBER 6

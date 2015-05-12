@@ -23,8 +23,8 @@ Controller::Controller() {
 Histogram* getHistogram(int id) {
 
     Mat hist_h, hist_s, hist_v;
-    QString path = "hist_"+IdToString(id) + ".xml";
-    FileStorage fs(path.toLatin1().toStdString(), FileStorage::READ);
+    QString path = QString(HIST_PATH) + "hist_"+IdToString(id) + ".xml";
+    FileStorage fs(path.toLatin1().data(), FileStorage::READ);
 
     fs ["hist_h"] >> hist_h;
     fs ["hist_s"] >> hist_s;
@@ -113,19 +113,24 @@ void Controller::insertImages(QList<QString> *list) {
 
 QList<QString> *Controller::search(QString path) {
     QList<QString> *out = new QList<QString>();
-    int *idx = (int*) malloc(histograms->size() * sizeof(int));
-    double *compares = (double*) malloc(histograms->size() * sizeof(double));
+    int len = histograms->size();
+    int *idx = (int*) malloc(len * sizeof(int));
+    double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
-    for (int i = 0; i < histograms->size(); ++i) {
+    for (int i = 0; i < len; ++i) {
         idx[i] = i+1;
+        cout << idx[i] <<endl;
         compares[i] = hist->compare(histograms->at(i));
+
     }
 
     //sort
+    quicksort(idx,compares,len);
 
-    for (int i = 0; i < histograms->size(); ++i) {
+    for (int i = 0; i < len; ++i) {
         //ALERT jpg extension hardcoded
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+        cout << compares[i] <<"-" <<idx[i] <<endl;
     }
 
     return out;

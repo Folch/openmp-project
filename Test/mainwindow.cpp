@@ -67,24 +67,49 @@ void MainWindow::showImages(QList<QString> *filesList){
     QList<QImage> images;
     /*QList<QString> filesList;
     filesList << "image1.png" << "image2.png" << "image3.png";*/
-
+    Mat img;
+    int i = 0;
     foreach(QFileInfo fileInfo, *filesList){
 
         tempFileName = fileInfo.absoluteFilePath();
         cout << tempFileName.toStdString() << endl;
-        Mat image2 = imread(tempFileName.toStdString(), CV_LOAD_IMAGE_COLOR);
-        QImage image = QImage((uchar*) image2.data, image2.cols, image2.rows, image2.step, QImage::Format_RGB888);
+        img = imread(tempFileName.toStdString(), CV_LOAD_IMAGE_COLOR  );
+        QImage qimg = QImage((uchar*) img.data, img.cols, img.rows,
+                              img.step, QImage::Format_RGB888);
         //QImage image(tempFileName);
-        copy = image.scaled(200,200,Qt::KeepAspectRatio);
+
+        copy = qimg.scaled(200,200,Qt::KeepAspectRatio);
         images.append(copy);
-    }
+        if(i<4)
+            imshow( "Read Demo",img);
+        i++;
+
+    } 
     int n = 3;
     for (int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
-            QPixmap p(QPixmap::fromImage(images[i*n+j]));
+            QPixmap p = QPixmap::fromImage(images[i*n+j]);
             QLabel *label = new QLabel(imagesWidget);
             label->setPixmap(p);
             grid->addWidget(label, i, j);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

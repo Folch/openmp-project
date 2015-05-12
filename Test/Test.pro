@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     controller.cpp \
-    histogram.cpp
+    histogram.cpp \
+    quicksort.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
-    histogram.h
+    histogram.h \
+    quicksort.h
 
 FORMS    += mainwindow.ui
 

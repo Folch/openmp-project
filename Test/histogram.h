@@ -3,7 +3,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#define METHOD_COMPARE 3
+#define METHOD_COMPARE 2
 
 using namespace cv;
 class Histogram
