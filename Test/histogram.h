@@ -3,6 +3,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#define METHOD_COMPARE 3
+
 using namespace cv;
 class Histogram
 {
@@ -12,6 +14,8 @@ public:
     Mat hist_h;
     Mat hist_s;
     Mat hist_v;
+
+    double compare(Histogram *h);
 };
 
 #endif // HISTOGRAM_H

@@ -32,6 +32,8 @@ void MainWindow::exit(){
 void MainWindow::chooseImage(){
     QString path = MainWindow::getFile();
     ui->imageinput->setText(path);
+    QList<QString> *list = controller->search(path);
+    showImages(list);
 }
 
 QString MainWindow::getFile(){
@@ -56,7 +58,7 @@ QString MainWindow::getDirectoryPath() {
 
 
 
-void MainWindow::showImages(QList<QString> filesList){
+void MainWindow::showImages(QList<QString> *filesList){
     QWidget *imagesWidget = new QWidget();
     QGridLayout *grid = ui->gridLayout;
 
@@ -66,7 +68,7 @@ void MainWindow::showImages(QList<QString> filesList){
     /*QList<QString> filesList;
     filesList << "image1.png" << "image2.png" << "image3.png";*/
 
-    foreach(QFileInfo fileInfo, filesList){
+    foreach(QFileInfo fileInfo, *filesList){
 
         tempFileName = fileInfo.absoluteFilePath();
         cout << tempFileName.toStdString() << endl;
@@ -79,7 +81,7 @@ void MainWindow::showImages(QList<QString> filesList){
     int n = 3;
     for (int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
-            QPixmap p(QPixmap::fromImage(images[i]));
+            QPixmap p(QPixmap::fromImage(images[i*n+j]));
             QLabel *label = new QLabel(imagesWidget);
             label->setPixmap(p);
             grid->addWidget(label, i, j);

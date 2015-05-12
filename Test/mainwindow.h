@@ -35,7 +35,7 @@ public:
     ~MainWindow();
     QString getDirectoryPath();
     QString getFile();
-    void showImages(QList<QString>);
+    void showImages(QList<QString>*);
 
 private:
     Ui::MainWindow *ui;

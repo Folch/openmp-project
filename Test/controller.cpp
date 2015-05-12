@@ -23,8 +23,8 @@ Controller::Controller() {
 Histogram* getHistogram(int id) {
 
     Mat hist_h, hist_s, hist_v;
-    QString path = "hist_"+IdToString(id);
-    FileStorage fs(path.toLatin1().data(), FileStorage::READ);
+    QString path = "hist_"+IdToString(id) + ".xml";
+    FileStorage fs(path.toLatin1().toStdString(), FileStorage::READ);
 
     fs ["hist_h"] >> hist_h;
     fs ["hist_s"] >> hist_s;
@@ -112,6 +112,23 @@ void Controller::insertImages(QList<QString> *list) {
 }
 
 QList<QString> *Controller::search(QString path) {
+    QList<QString> *out = new QList<QString>();
+    int *idx = (int*) malloc(histograms->size() * sizeof(int));
+    double *compares = (double*) malloc(histograms->size() * sizeof(double));
+    Histogram *hist = createHistogram(path);
+    for (int i = 0; i < histograms->size(); ++i) {
+        idx[i] = i+1;
+        compares[i] = hist->compare(histograms->at(i));
+    }
+
+    //sort
+
+    for (int i = 0; i < histograms->size(); ++i) {
+        //ALERT jpg extension hardcoded
+        out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+    }
+
+    return out;
 
 }
 
