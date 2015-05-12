@@ -35,7 +35,7 @@ void MainWindow::chooseImage(){
 }
 
 QString MainWindow::getFile(){
-    return QFileDialog::getOpenFileName(this,tr("Directory"),NULL,tr("All files (*.*);;JPEG (*.jpg *.jpeg);;PNG (*.png)" ));
+    return QFileDialog::getOpenFileName(this,tr("Directory"),NULL,tr("All images (*.jpg *.jpeg *.png);;JPEG (*.jpg *.jpeg);;PNG (*.png)" ));
 }
 
 /**

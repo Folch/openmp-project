@@ -23,7 +23,10 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-LIBS += `pkg-config opencv --libs`
+QMAKE_CXXFLAGS += -fopenmp -mavx -fabi-version=0 -ffast-math
+QMAKE_LFLAGS += -fopenmp
+QMAKE_CXXFLAGS_RELEASE *= -O3
+QMAKE_CFLAGS_RELEASE += -fopenmp
 
-QMAKE_CXXFLAGS+= -fopenmp
-QMAKE_LFLAGS +=  -fopenmp
+LIBS += `pkg-config opencv --libs`
+LIBS += -fopenmp

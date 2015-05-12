@@ -94,25 +94,21 @@ void Controller::insertImages(QList<QString> *list) {
 
     Histogram *h;
     int i;
+
+    //#pragma omp parallel for
     for(i = 0; i < list->size(); i++){
         QStringList splitted = list->at(i).split('/');
         QString name = splitted.last();
-        QString from = "cp "+list->at(i)+" "+IMG_PATH + "img_" + IdToString(id) + "." + name.split('.').last();
+        QString from = "cp "+list->at(i)+" "+IMG_PATH + "img_" + IdToString(id+i) + "." + name.split('.').last();
+        // Copiar la imatge a la carpeta 'img/'
         system (from.toLatin1().data());
+        // Calcular l'histograma
         h = createHistogram(list->at(i));
         histograms->append(h);
-        storeHistogram(id, h);
-
-        id++;
-
+        // Guardar l'histograma a 'hist/'
+        storeHistogram(id+i, h);
     }
-    /*Carregar cada imatge
-            * Copiar la imatge a la carpeta 'img/'
-            * Calcular l'histograma
-            * Guardar l'histograma a 'hist/'
-    */
-
-
+    id += list->size();
 }
 
 QList<QString> *Controller::search(QString path) {
@@ -137,12 +133,9 @@ QList<QString>* Controller::getFilesDirectory(QString path){
     DIR *dpdf;
     struct dirent *epdf;
     QList<QString> *images = new QList<QString>();
-    //dpdf = opendir("./");
     dpdf = opendir(path.toLatin1().data());
     if (dpdf != NULL){
        while ((epdf = readdir(dpdf))){
-
-
           if(epdf->d_name[0] == '.')
               continue;
           images->append(path+"/"+ QString(QLatin1String(epdf->d_name)));
