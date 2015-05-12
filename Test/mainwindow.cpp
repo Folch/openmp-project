@@ -32,8 +32,6 @@ void MainWindow::exit(){
 void MainWindow::chooseImage(){
     QString path = MainWindow::getFile();
     ui->imageinput->setText(path);
-    cout <<  path.toStdString() << endl;
-
 }
 
 QString MainWindow::getFile(){
@@ -48,7 +46,12 @@ QString MainWindow::getFile(){
  */
 
 QString MainWindow::getDirectoryPath() {
-    return "/home/afolchga8.alumnes/openmp-project/Test-build-desktop-Qt_4_8_2_in_PATH__System__Debug/images";
+    //return "/home/afolchga8.alumnes/openmp-project/Test-build-desktop-Qt_4_8_2_in_PATH__System__Debug/images";
+    return QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                             "/home",
+                                             QFileDialog::ShowDirsOnly
+                                             | QFileDialog::DontResolveSymlinks);
+
 }
 
 
