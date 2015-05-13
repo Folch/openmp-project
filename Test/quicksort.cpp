@@ -40,8 +40,8 @@ void _quicksort(int *idx, double *compares, int p, int r) {
 }
 
 void quicksort(int *idx, double *compares, int len) {
-	#pragma omp single
-	_quicksort(idx, compares, 0, len-1);
+    #pragma omp single
+    _quicksort(idx, compares, 0, len-1);
 }
 
 

@@ -37,8 +37,7 @@ public:
     void insertImages(QList<QString> *list);
 
 private:
-    QList<Histogram*> *histograms;
-    QList<QString> *imagesPaths;
+    Histogram **histograms;
     int id;
 };
 

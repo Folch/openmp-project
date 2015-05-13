@@ -15,6 +15,7 @@ Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
     id=1;
     QList<QString> *list = getFilesDirectory(HIST_PATH);
+    histograms = (Histogram**)malloc(list->size()*sizeof(Histogram*));
     loadHist(list);
 }
 
@@ -94,9 +95,11 @@ void Controller::insertImages(QList<QString> *list) {
 
     Histogram *h;
     int i;
+    int len = list->size();
+    histograms = (Histogram**) realloc(histograms, (len+id-1)*sizeof(Histogram*));
 
     #pragma omp parallel for
-    for(i = 0; i < list->size(); i++){
+    for(i = 0; i < len; i++){
         QStringList splitted = list->at(i).split('/');
         QString name = splitted.last();
         QString from = "cp "+list->at(i)+" "+IMG_PATH + "img_" + IdToString(id+i) + "." + name.split('.').last();
@@ -104,46 +107,50 @@ void Controller::insertImages(QList<QString> *list) {
         system (from.toLatin1().data());
         // Calcular l'histograma
         h = createHistogram(list->at(i));
-        histograms->append(h);
+        histograms[id+i-1] = h;
         // Guardar l'histograma a 'hist/'
         storeHistogram(id+i, h);
     }
-    id += list->size();
+    id += len;
 }
 
 QList<QString> *Controller::search(QString path) {
     QList<QString> *out = new QList<QString>();
-    int len = histograms->size();
+    int len = id-1;
     int *idx = (int*) malloc(len * sizeof(int));
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
 
-	#pragma omp parallel
+    #pragma omp parallel
 	{
-		#pragma single
-		{
+        #pragma omp single
+        {
 			for (int i = 0; i < len; ++i) {
 					idx[i] = i+1;
-					#pragma omp task untied
-					compares[i] = hist->compare(histograms->at(i));
+                    #pragma omp task untied
+                    compares[i] = hist->compare(histograms[i]);
 		
 			}
-		}
+        }
 		
-		//sort
-		quicksort(idx,compares,len);
-		
-		for (int i = 0; i < len; ++i)
-		    out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
-	}
+
+        //sort
+        quicksort(idx,compares,len);
+
+        #pragma omp single
+        {
+            for (int i = 0; i < len; ++i)
+                out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+        }
+    }
     return out;
 
 }
 
 void Controller::loadHist(QList<QString> *list) {
-    histograms = new QList<Histogram*>;
+
     for (id = 1; id <= list->size(); ++id) {
-        histograms->append(getHistogram(id));
+        histograms[id-1] = getHistogram(id);
     }
 }
 
