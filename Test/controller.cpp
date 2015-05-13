@@ -129,6 +129,12 @@ QList<QString> *Controller::search(QString path) {
     //sort
     quicksort(idx,compares,len);
 
+    /*
+    for (int i = 0; i < len; ++i) {
+        cout << compares[i] << "-" << idx[i] << endl;
+    }
+    */
+
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
 
