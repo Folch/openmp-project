@@ -11,9 +11,9 @@ class Histogram
 public:
     Histogram(Mat hist_h, Mat hist_s, Mat hist_v);
     ~Histogram();
-    Mat hist_h;
-    Mat hist_s;
-    Mat hist_v;
+    Mat *hist_h;
+    Mat *hist_s;
+    Mat *hist_v;
 
     double compare(Histogram *h);
 };

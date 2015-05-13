@@ -1,9 +1,9 @@
 #include "histogram.h"
 
 Histogram::Histogram(Mat hist_h, Mat hist_s, Mat hist_v) {
-    this->hist_h = hist_h;
-    this->hist_s = hist_s;
-    this->hist_v = hist_v;
+    this->hist_h = new Mat(hist_h);
+    this->hist_s = new Mat(hist_s);
+    this->hist_v = new Mat(hist_v);
 }
 
 double Histogram::compare(Histogram *h) {
@@ -18,9 +18,9 @@ double Histogram::compare(Histogram *h) {
     else if (METHOD_COMPARE == 4)
         compare_method = CV_COMP_BHATTACHARYYA; // Bhattacharyya distance
 
-    double comphist_h = compareHist( hist_h, h->hist_h, compare_method);
-    double comphist_s = compareHist( hist_s, h->hist_s, compare_method);
-    double comphist_v = compareHist( hist_v, h->hist_v, compare_method);
+    double comphist_h = compareHist( *hist_h, *h->hist_h, compare_method);
+    double comphist_s = compareHist( *hist_s, *h->hist_s, compare_method);
+    double comphist_v = compareHist( *hist_v, *h->hist_v, compare_method);
 
     return comphist_h + comphist_s + comphist_v;
 }

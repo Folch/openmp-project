@@ -74,6 +74,7 @@ void MainWindow::showImages(QList<QString> *filesList){
             tempFileName = QFileInfo(filesList->at(i*n+j)).absoluteFilePath();
             cout << tempFileName.toStdString() << endl;
             img = imread(tempFileName.toStdString(), CV_LOAD_IMAGE_COLOR  );
+            cvtColor(img, img, CV_BGR2RGB);
             QImage qimg = QImage((uchar*) img.data, img.cols, img.rows,
                                   img.step, QImage::Format_RGB888);
             //QImage image(tempFileName);
