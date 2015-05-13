@@ -31,6 +31,8 @@ void MainWindow::exit(){
 }
 void MainWindow::chooseImage(){
     QString path = MainWindow::getFile();
+    if(path.compare("") == 0)
+        return;
     ui->imageinput->setText(path);
     QList<QString> *list = controller->search(path);
     showImages(list);
