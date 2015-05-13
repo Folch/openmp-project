@@ -3,8 +3,8 @@
 int partition(int *idx, double *compares, int p, int r)
 {
   int mid = (p+r)/2;
-  int x = compares[mid];
-  int t;
+  double x = compares[mid];
+  double t;
 
   t = compares[p]; compares[p] = compares[mid]; compares[mid] = t;
   t = idx[p]; idx[p] = idx[mid]; idx[mid] = t;

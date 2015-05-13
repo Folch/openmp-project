@@ -126,10 +126,13 @@ QList<QString> *Controller::search(QString path) {
 
     }
 
+    for (int i = 0; i < len; ++i) {
+        cout << compares[i] << "-" << idx[i] << endl;
+    }
     //sort
     quicksort(idx,compares,len);
 
-
+    cout << endl;
     for (int i = 0; i < len; ++i) {
         cout << compares[i] << "-" << idx[i] << endl;
     }
