@@ -98,7 +98,6 @@ void Controller::insertImages(QList<QString> *list) {
     int len = list->size();
     histograms = (Histogram**) realloc(histograms, (len+id-1)*sizeof(Histogram*));
 
-    #pragma omp parallel for
     for(i = 0; i < len; i++){
         QStringList splitted = list->at(i).split('/');
         QString name = splitted.last();
@@ -121,28 +120,18 @@ QList<QString> *Controller::search(QString path) {
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
 
-    #pragma omp parallel
-	{
-        #pragma omp single
-        {
-			for (int i = 0; i < len; ++i) {
-					idx[i] = i+1;
-                    #pragma omp task untied
-                    compares[i] = hist->compare(histograms[i]);
-		
-			}
-        }
-		
+    for (int i = 0; i < len; ++i) {
+            idx[i] = i+1;
+            compares[i] = hist->compare(histograms[i]);
 
-        //sort
-        quicksort(idx,compares,len);
-
-        #pragma omp single
-        {
-            for (int i = 0; i < len; ++i)
-                out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
-        }
     }
+
+    //sort
+    quicksort(idx,compares,len);
+
+    for (int i = 0; i < len; ++i)
+        out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+
     return out;
 
 }

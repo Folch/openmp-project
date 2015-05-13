@@ -31,16 +31,13 @@ void _quicksort(int *idx, double *compares, int p, int r) {
     if (p < r) {
         int q = partition(idx, compares, p, r);
 
-        #pragma omp task untied
         _quicksort(idx, compares, p, q-1);
 
-        #pragma omp task untied
         _quicksort(idx, compares, q+1, r);
 	}
 }
 
 void quicksort(int *idx, double *compares, int len) {
-    #pragma omp single
     _quicksort(idx, compares, 0, len-1);
 }
 
