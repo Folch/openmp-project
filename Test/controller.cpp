@@ -95,7 +95,7 @@ void Controller::insertImages(QList<QString> *list) {
     Histogram *h;
     int i;
 
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for(i = 0; i < list->size(); i++){
         QStringList splitted = list->at(i).split('/');
         QString name = splitted.last();
@@ -117,22 +117,25 @@ QList<QString> *Controller::search(QString path) {
     int *idx = (int*) malloc(len * sizeof(int));
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
-    for (int i = 0; i < len; ++i) {
-        idx[i] = i+1;
-        cout << idx[i] <<endl;
-        compares[i] = hist->compare(histograms->at(i));
 
-    }
-
-    //sort
-    quicksort(idx,compares,len);
-
-    for (int i = 0; i < len; ++i) {
-        //ALERT jpg extension hardcoded
-        out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
-        cout << compares[i] <<"-" <<idx[i] <<endl;
-    }
-
+	#pragma omp parallel
+	{
+		#pragma single
+		{
+			for (int i = 0; i < len; ++i) {
+					idx[i] = i+1;
+					#pragma omp task untied
+					compares[i] = hist->compare(histograms->at(i));
+		
+			}
+		}
+		
+		//sort
+		quicksort(idx,compares,len);
+		
+		for (int i = 0; i < len; ++i)
+		    out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+	}
     return out;
 
 }

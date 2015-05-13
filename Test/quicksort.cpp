@@ -1,6 +1,5 @@
 #include "quicksort.h"
 
-
 int partition(int *idx, double *compares, int p, int r)
 {
   int mid = (p+r)/2;
@@ -15,7 +14,7 @@ int partition(int *idx, double *compares, int p, int r)
 
   do k++; while ((compares[k] <= x) && (k < r));
   do l--; while (compares[l] > x);
-    //jutju7u
+
   while (k < l) {
     t = compares[k]; compares[k] = compares[l]; compares[l] = t;
     t = idx[k]; idx[k] = idx[l]; idx[l] = t;
@@ -32,16 +31,17 @@ void _quicksort(int *idx, double *compares, int p, int r) {
     if (p < r) {
         int q = partition(idx, compares, p, r);
 
-        //#pragma omp task untied
+        #pragma omp task untied
         _quicksort(idx, compares, p, q-1);
 
-        //#pragma omp task untied
+        #pragma omp task untied
         _quicksort(idx, compares, q+1, r);
-      }
+	}
 }
 
 void quicksort(int *idx, double *compares, int len) {
-    _quicksort(idx, compares, 0, len-1);
+	#pragma omp single
+	_quicksort(idx, compares, 0, len-1);
 }
 
 

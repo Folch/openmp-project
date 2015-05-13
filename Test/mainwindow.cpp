@@ -68,8 +68,8 @@ void MainWindow::showImages(QList<QString> *filesList){
     /*QList<QString> filesList;
     filesList << "image1.png" << "image2.png" << "image3.png";*/
     Mat img;
-    int i = 0;
-    foreach(QFileInfo fileInfo, *filesList){
+	/*for (int i=0; i<n; i++) {
+    //foreach(QFileInfo fileInfo, *filesList){
 
         tempFileName = fileInfo.absoluteFilePath();
         cout << tempFileName.toStdString() << endl;
@@ -77,18 +77,21 @@ void MainWindow::showImages(QList<QString> *filesList){
         QImage qimg = QImage((uchar*) img.data, img.cols, img.rows,
                               img.step, QImage::Format_RGB888);
         //QImage image(tempFileName);
-
         copy = qimg.scaled(200,200,Qt::KeepAspectRatio);
         images.append(copy);
-        if(i<4)
-            imshow( "Read Demo",img);
-        i++;
-
-    } 
+    } */
     int n = 3;
     for (int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
-            QPixmap p = QPixmap::fromImage(images[i*n+j]);
+			tempFileName = filesList->at(i*n+j).absoluteFilePath();
+		    cout << tempFileName.toStdString() << endl;
+		    img = imread(tempFileName.toStdString(), CV_LOAD_IMAGE_COLOR  );
+		    QImage qimg = QImage((uchar*) img.data, img.cols, img.rows,
+		                          img.step, QImage::Format_RGB888);
+		    //QImage image(tempFileName);
+		    qimg = qimg.scaled(200,200,Qt::KeepAspectRatio);
+			QPixmap p = QPixmap::fromImage(qimg);
+            //QPixmap p = QPixmap::fromImage(images[i*n+j]);
             QLabel *label = new QLabel(imagesWidget);
             label->setPixmap(p);
             grid->addWidget(label, i, j);
