@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include "histogram.h"
 #include <sys/stat.h>
+#include <time.h>
 
 #include <math.h>
 #include <iostream>

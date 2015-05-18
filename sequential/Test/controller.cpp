@@ -42,30 +42,30 @@ Histogram* createHistogram(QString path) {
     cvtColor(img, hsv_test, CV_BGR2HSV );
     split(hsv_test, hsv_planes);
     /// Bins to use
-      int h_bins = 50; int s_bins = 50; int v_bins = 100;
+	int h_bins = 50; int s_bins = 50; int v_bins = 100;
 
-      // Ranges
-      float hrang[] = {0, 180};
-      const float *h_ranges = { hrang };
+	// Ranges
+	float hrang[] = {0, 180};
+	const float *h_ranges = { hrang };
 
-      float srang[] = {0, 256};
-      const float *s_ranges = { srang };
+	float srang[] = {0, 256};
+	const float *s_ranges = { srang };
 
-      float vrang[] = {0, 256};
-      const float *v_ranges = { vrang };
+	float vrang[] = {0, 256};
+	const float *v_ranges = { vrang };
 
-      /// Histograms
-      Mat hist_h, hist_s, hist_v;
+	/// Histograms
+	Mat hist_h, hist_s, hist_v;
 
-      /// Calculate the histogram for the H image
-      calcHist( &hsv_planes[0], 1, 0, Mat(), hist_h, 1, &h_bins, &h_ranges, true, false );
-      normalize( hist_h, hist_h, 0, 1, NORM_MINMAX, -1, Mat() );
+	/// Calculate the histogram for the H image
+	calcHist( &hsv_planes[0], 1, 0, Mat(), hist_h, 1, &h_bins, &h_ranges, true, false );
+	normalize( hist_h, hist_h, 0, 1, NORM_MINMAX, -1, Mat() );
 
-      calcHist( &hsv_planes[1], 1, 0, Mat(), hist_s, 1, &s_bins, &s_ranges, true, false );
-      normalize( hist_s, hist_s, 0, 1, NORM_MINMAX, -1, Mat() );
+	calcHist( &hsv_planes[1], 1, 0, Mat(), hist_s, 1, &s_bins, &s_ranges, true, false );
+	normalize( hist_s, hist_s, 0, 1, NORM_MINMAX, -1, Mat() );
 
-      calcHist( &hsv_planes[2], 1, 0, Mat(), hist_v, 1, &v_bins, &v_ranges, true, false );
-      normalize( hist_v, hist_v, 0, 1, NORM_MINMAX, -1, Mat() );
+	calcHist( &hsv_planes[2], 1, 0, Mat(), hist_v, 1, &v_bins, &v_ranges, true, false );
+	normalize( hist_v, hist_v, 0, 1, NORM_MINMAX, -1, Mat() );
 
     return new Histogram(hist_h, hist_s, hist_v);
 }
@@ -102,6 +102,8 @@ void Controller::insertImages(QList<QString> *list) {
     int len = list->size();
     histograms = (Histogram**) realloc(histograms, (len+id-1)*sizeof(Histogram*));
 
+	clock_t tStart = clock();
+
     for(i = 0; i < len; i++){
         QStringList splitted = list->at(i).split('/');
         QString name = splitted.last();
@@ -114,6 +116,7 @@ void Controller::insertImages(QList<QString> *list) {
         // Guardar l'histograma a 'hist/'
         storeHistogram(id+i, h);
     }
+	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
     id += len;
 }
 
@@ -124,36 +127,36 @@ QList<QString> *Controller::search(QString path) {
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
 
+	clock_t tStart = clock();
+
     for (int i = 0; i < len; ++i) {
             idx[i] = i+1;
             compares[i] = hist->compare(histograms[i]);
 
     }
 
-    for (int i = 0; i < len; ++i) {
-        cout << compares[i] << "-" << idx[i] << endl;
-    }
     //sort
     quicksort(idx,compares,len);
 
-    cout << endl;
-    for (int i = 0; i < len; ++i) {
-        cout << compares[i] << "-" << idx[i] << endl;
-    }
-
+	cout << "Temps d'execució [search]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
 
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
+
+
 
     return out;
 
 }
 
 void Controller::loadHist(QList<QString> *list) {
+	clock_t tStart = clock();
 
     for (id = 1; id <= list->size(); ++id) {
         histograms[id-1] = getHistogram(id);
     }
+
+	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
 }
 
 /**
