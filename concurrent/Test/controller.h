@@ -10,7 +10,14 @@
 
 #include <math.h>
 #include <iostream>
-
+#include <stdio.h>
+#include <sys/time.h>
+#include <time.h>
+#include <sys/sendfile.h>  // sendfile
+#include <fcntl.h>         // open
+#include <unistd.h>        // close
+#include <sys/stat.h>      // fstat
+#include <sys/types.h>     // fstat
 using namespace std;
 
 

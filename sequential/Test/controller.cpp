@@ -116,7 +116,7 @@ void Controller::insertImages(QList<QString> *list) {
         // Guardar l'histograma a 'hist/'
         storeHistogram(id+i, h);
     }
-	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    cout << "Temps d'execució [insertImages]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
     id += len;
 }
 
@@ -138,7 +138,7 @@ QList<QString> *Controller::search(QString path) {
     //sort
     quicksort(idx,compares,len);
 
-	cout << "Temps d'execució [search]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    cout << "Temps d'execució [search]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
 
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
@@ -156,7 +156,7 @@ void Controller::loadHist(QList<QString> *list) {
         histograms[id-1] = getHistogram(id);
     }
 
-	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    cout << "Temps d'execució [loadHist]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC<< " segons" << endl;
 }
 
 /**

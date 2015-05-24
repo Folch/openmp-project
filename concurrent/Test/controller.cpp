@@ -102,22 +102,58 @@ void Controller::insertImages(QList<QString> *list) {
     int len = list->size();
     histograms = (Histogram**) realloc(histograms, (len+id-1)*sizeof(Histogram*));
 
-	clock_t tStart = clock();
 
-	#pragma omp parallel for
+
+    time_t current_time;
+
+    current_time = time(NULL);
+
+    #pragma omp parallel for //private(in,out,buf,read)
     for(i = 0; i < len; i++){
-        QStringList splitted = list->at(i).split('/');
-        QString name = splitted.last();
-        QString from = "cp "+list->at(i)+" "+IMG_PATH + "img_" + IdToString(id+i) + "." + name.split('.').last();
+
+        int source = open(list->at(i).toStdString().data(), O_RDONLY, 0);
+        QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
+            int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT /*| O_TRUNC/**/, 0644);
+
+            // struct required, rationale: function stat() exists also
+            struct stat stat_source;
+            fstat(source, &stat_source);
+
+            sendfile(dest, source, 0, stat_source.st_size);
+
+            close(source);
+            close(dest);
+
+
+        /*FILE *in,*out;
+        char buf[1024];
+        int read;
+
+        in = fopen(list->at(i).toStdString().data(), "rb");
+        QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
+        out = fopen(path.toStdString().data(), "wb");
+        read = 0;
+        //  Read data in 1kb chunks and write to output file
+        while ((read = fread(buf, 1, 1024, in)) == 1024)
+        {
+          fwrite(buf, 1, 1024, out);
+        }
+
+        //  If there is any data left over write it out
+        fwrite(buf, 1, read, out);
         // Copiar la imatge a la carpeta 'img/'
-        system (from.toLatin1().data());
+        fclose(out);
+        fclose(in);*/
         // Calcular l'histograma
         h = createHistogram(list->at(i));
         histograms[id+i-1] = h;
         // Guardar l'histograma a 'hist/'
         storeHistogram(id+i, h);
+
     }
-	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    current_time = time(NULL)-current_time;
+
+    cout << "Temps d'execució [insertImages]: " << current_time<< " segons" << endl;
     id += len;
 }
 
@@ -144,7 +180,7 @@ QList<QString> *Controller::search(QString path) {
 		//sort
 		quicksort(idx,compares,len);
 	}
-	cout << "Temps d'execució [search]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    cout << "Temps d'execució [search]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC<< " segons" << endl;
 
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
@@ -162,7 +198,7 @@ void Controller::loadHist(QList<QString> *list) {
         histograms[id-1] = getHistogram(id);
     }
 
-	cout << "Temps d'execució [insertImages]: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
+    cout << "Temps d'execució [loadHist]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
 }
 
 /**
