@@ -104,46 +104,27 @@ void Controller::insertImages(QList<QString> *list) {
 
 
 
-    time_t current_time;
+    struct timespec start, finish;
+    double elapsed;
 
-    current_time = time(NULL);
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
-    #pragma omp parallel for //private(in,out,buf,read)
+    #pragma omp parallel for
     for(i = 0; i < len; i++){
 
         int source = open(list->at(i).toStdString().data(), O_RDONLY, 0);
         QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
-            int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT /*| O_TRUNC/**/, 0644);
+        int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT, 0644);
 
-            // struct required, rationale: function stat() exists also
-            struct stat stat_source;
-            fstat(source, &stat_source);
+        // struct required, rationale: function stat() exists also
+        struct stat stat_source;
+        fstat(source, &stat_source);
 
-            sendfile(dest, source, 0, stat_source.st_size);
+        sendfile(dest, source, 0, stat_source.st_size);
 
-            close(source);
-            close(dest);
+        close(source);
+        close(dest);
 
-
-        /*FILE *in,*out;
-        char buf[1024];
-        int read;
-
-        in = fopen(list->at(i).toStdString().data(), "rb");
-        QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
-        out = fopen(path.toStdString().data(), "wb");
-        read = 0;
-        //  Read data in 1kb chunks and write to output file
-        while ((read = fread(buf, 1, 1024, in)) == 1024)
-        {
-          fwrite(buf, 1, 1024, out);
-        }
-
-        //  If there is any data left over write it out
-        fwrite(buf, 1, read, out);
-        // Copiar la imatge a la carpeta 'img/'
-        fclose(out);
-        fclose(in);*/
         // Calcular l'histograma
         h = createHistogram(list->at(i));
         histograms[id+i-1] = h;
@@ -151,9 +132,12 @@ void Controller::insertImages(QList<QString> *list) {
         storeHistogram(id+i, h);
 
     }
-    current_time = time(NULL)-current_time;
+    clock_gettime(CLOCK_MONOTONIC, &finish);
 
-    cout << "Temps d'execució [insertImages]: " << current_time<< " segons" << endl;
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+    cout << "Temps d'execució [insertImages]: " << elapsed << " segons" << endl;
     id += len;
 }
 
@@ -164,7 +148,10 @@ QList<QString> *Controller::search(QString path) {
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
 
-	clock_t tStart = clock();
+    struct timespec start, finish;
+    double elapsed;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
 	#pragma omp parallel
 	{
@@ -180,7 +167,11 @@ QList<QString> *Controller::search(QString path) {
 		//sort
 		quicksort(idx,compares,len);
 	}
-    cout << "Temps d'execució [search]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC<< " segons" << endl;
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+    cout << "Temps d'execució [search]: "<< elapsed << " segons" << endl;
 
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
@@ -192,13 +183,19 @@ QList<QString> *Controller::search(QString path) {
 }
 
 void Controller::loadHist(QList<QString> *list) {
-	clock_t tStart = clock();
+    struct timespec start, finish;
+    double elapsed;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (id = 1; id <= list->size(); ++id) {
         histograms[id-1] = getHistogram(id);
     }
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-    cout << "Temps d'execució [loadHist]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
+    cout << "Temps d'execució [loadHist]: "<< elapsed << " segons"<< endl;
 }
 
 /**

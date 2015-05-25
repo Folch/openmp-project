@@ -18,6 +18,9 @@ using namespace std;
 #include <iostream>
 #include <QStringList>
 #include <quicksort.h>
+#include <sys/sendfile.h>  // sendfile
+#include <fcntl.h>         // open
+#include <unistd.h>        // close
 
 #define IMG_PATH "./img/"
 #define HIST_PATH "./hist/"

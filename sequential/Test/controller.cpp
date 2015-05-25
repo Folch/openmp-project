@@ -102,21 +102,40 @@ void Controller::insertImages(QList<QString> *list) {
     int len = list->size();
     histograms = (Histogram**) realloc(histograms, (len+id-1)*sizeof(Histogram*));
 
-	clock_t tStart = clock();
+    struct timespec start, finish;
+    double elapsed;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
 
     for(i = 0; i < len; i++){
-        QStringList splitted = list->at(i).split('/');
-        QString name = splitted.last();
-        QString from = "cp "+list->at(i)+" "+IMG_PATH + "img_" + IdToString(id+i) + "." + name.split('.').last();
-        // Copiar la imatge a la carpeta 'img/'
-        system (from.toLatin1().data());
+
+        int source = open(list->at(i).toStdString().data(), O_RDONLY, 0);
+        QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
+        int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT, 0644);
+
+        // struct required, rationale: function stat() exists also
+        struct stat stat_source;
+        fstat(source, &stat_source);
+
+        sendfile(dest, source, 0, stat_source.st_size);
+
+        close(source);
+        close(dest);
+
         // Calcular l'histograma
         h = createHistogram(list->at(i));
         histograms[id+i-1] = h;
         // Guardar l'histograma a 'hist/'
         storeHistogram(id+i, h);
+
     }
-    cout << "Temps d'execució [insertImages]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+    cout << "Temps d'execució [insertImages]: " << elapsed << " segons" << endl;
     id += len;
 }
 
@@ -127,36 +146,46 @@ QList<QString> *Controller::search(QString path) {
     double *compares = (double*) malloc(len * sizeof(double));
     Histogram *hist = createHistogram(path);
 
-	clock_t tStart = clock();
+    struct timespec start, finish;
+    double elapsed;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (int i = 0; i < len; ++i) {
             idx[i] = i+1;
-            compares[i] = hist->compare(histograms[i]);
 
+            compares[i] = hist->compare(histograms[i]);
     }
 
     //sort
     quicksort(idx,compares,len);
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-    cout << "Temps d'execució [search]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC << " segons"<< endl;
+    cout << "Temps d'execució [search]: "<< elapsed << " segons" << endl;
 
     for (int i = 0; i < len; ++i)
         out->append(QString(IMG_PATH) + "img_" + IdToString(idx[i]) + ".jpg");
-
-
 
     return out;
 
 }
 
 void Controller::loadHist(QList<QString> *list) {
-	clock_t tStart = clock();
+    struct timespec start, finish;
+    double elapsed;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (id = 1; id <= list->size(); ++id) {
         histograms[id-1] = getHistogram(id);
     }
 
-    cout << "Temps d'execució [loadHist]: "<< (double)(clock() - tStart)/CLOCKS_PER_SEC<< " segons" << endl;
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+    cout << "Temps d'execució [loadHist]: "<< elapsed << " segons"<< endl;
 }
 
 /**
