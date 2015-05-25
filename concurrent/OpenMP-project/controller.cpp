@@ -1,5 +1,9 @@
 #include "controller.h"
-
+/**
+  * Passat l'identificador, retorna un string de 6 slots
+  * amb l'identificador. p.ex.: 7 -> "000007".
+  *
+  */
 QString IdToString(int id) {
     int len = log10(id);
     len++;
@@ -11,6 +15,13 @@ QString IdToString(int id) {
     return out+QString::number(id);
 }
 
+/**
+  *
+  * El Controller és l'encarregat d'executar tota la capa de control de
+  * l'aplicació.
+  *
+  */
+
 Controller::Controller() {
     /*Cridar a loadHist per carregar els histogrames*/
     id=1;
@@ -19,7 +30,12 @@ Controller::Controller() {
     loadHist(list);
 }
 
-
+/**
+  *
+  * Carrega un histograma de disc a memòria.
+  *
+  *
+  */
 
 Histogram* getHistogram(int id) {
 
@@ -34,6 +50,11 @@ Histogram* getHistogram(int id) {
     return new Histogram(hist_h, hist_s, hist_v);
 }
 
+/**
+  *
+  * Passada una imatge et crea l'histograma d'aquella imatge.
+  * 
+  */
 
 Histogram* createHistogram(QString path) {
     Mat img, hsv_test;
@@ -70,6 +91,12 @@ Histogram* createHistogram(QString path) {
     return new Histogram(hist_h, hist_s, hist_v);
 }
 
+/**
+  *
+  * Guarda un histograma de memòria a disc.
+  *
+  */
+
 void storeHistogram(int id, Histogram* h) {
     QString path = QString(HIST_PATH) + QString("hist_") + IdToString(id) + ".xml";
     FileStorage fs(path.toLatin1().data(), FileStorage::WRITE);
@@ -80,6 +107,13 @@ void storeHistogram(int id, Histogram* h) {
 
     fs.release();
 }
+
+/**
+  *
+  * Aquesta funció inserta un conjunt d'imatges a la base de dades, 
+  * amb els seus histogrames corresponents.
+  *
+  */
 
 void Controller::insertImages(QList<QString> *list) {
 
@@ -150,6 +184,12 @@ void Controller::insertImages(QList<QString> *list) {
     id += len;
 }
 
+/**
+  *
+  * Pasada una imatge, calcula quina de les imatges de la base de dades
+  * és més semblant.
+  */
+
 QList<QString> *Controller::search(QString path) {
     QList<QString> *out = new QList<QString>();
     int len = id-1;
@@ -190,6 +230,12 @@ QList<QString> *Controller::search(QString path) {
     return out;
 
 }
+
+/**
+  *
+  * Carrega tots els histogrames de disc a memòria.
+  *
+  */
 
 void Controller::loadHist(QList<QString> *list) {
     struct timespec start, finish;

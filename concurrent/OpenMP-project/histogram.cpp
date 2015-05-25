@@ -1,10 +1,20 @@
 #include "histogram.h"
 
+/**
+  *
+  * Aquesta classe conté la informació necessaria per a un histograma.
+  */
+
 Histogram::Histogram(Mat hist_h, Mat hist_s, Mat hist_v) {
     this->hist_h = new Mat(hist_h);
     this->hist_s = new Mat(hist_s);
     this->hist_v = new Mat(hist_v);
 }
+
+/**
+  * Compara un histograma amb un altre amb el mètode escollit
+  *
+  */
 
 double Histogram::compare(Histogram *h) {
     int compare_method;
