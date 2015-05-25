@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 
-
+/**
+ * Constructor del MainWindow, es vinculen les senyals dels butons de la gui amb les funcions.
+ * @brief MainWindow::MainWindow
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -12,12 +16,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     controller = new Controller();
 }
-
+/**
+ * Destructor de la classe.
+ * @brief MainWindow::~MainWindow
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+/**
+ * Carrega les imatges del path escollit per l'usuari i les guarda la carpeta pròpia.
+ * @brief MainWindow::loadImages
+ */
 void MainWindow::loadImages(){
 
     QList<QString> *images = controller->getFilesDirectory(getDirectoryPath());
@@ -25,10 +36,18 @@ void MainWindow::loadImages(){
 
 }
 
-
+/**
+ * Funció que es crida al fer click a la opció de tancar.
+ * @brief MainWindow::exit
+ */
 void MainWindow::exit(){
     std::exit(0);
 }
+
+/**
+ * Funció que li demana a l'usuari la imatge a comparar amb la base de dades, fa la cerca i mostra les 9 imatges més semblants.
+ * @brief MainWindow::chooseImage
+ */
 void MainWindow::chooseImage(){
     QString path = MainWindow::getFile();
     if(path.compare("") == 0)
@@ -37,20 +56,23 @@ void MainWindow::chooseImage(){
     QList<QString> *list = controller->search(path);
     showImages(list);
 }
-
+/**
+ * Funció que es crida per seleccionar una imatge per cercar en format jpg.
+ * @brief MainWindow::getFile
+ * @return
+ */
 QString MainWindow::getFile(){
     return QFileDialog::getOpenFileName(this,tr("Directory"),NULL,tr("JPEG (*.jpg *.jpeg);;" ));
 }
 
 /**
- * Returns a selected directory path.
+ * Retorna el path a la carpeta on estan les imatges per crear la base de dades.
  *
  * @brief MainWindow::getDirectoryPath
  * @return
  */
 
 QString MainWindow::getDirectoryPath() {
-    //return "/home/afolchga8.alumnes/openmp-project/Test-build-desktop-Qt_4_8_2_in_PATH__System__Debug/images";
     return QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                              "/home",
                                              QFileDialog::ShowDirsOnly
@@ -59,7 +81,11 @@ QString MainWindow::getDirectoryPath() {
 }
 
 
-
+/**
+ * Funció que mostra en 3x3 les imatges més semblants al filesList.
+ * @brief MainWindow::showImages
+ * @param filesList
+ */
 void MainWindow::showImages(QList<QString> *filesList){
     QWidget *imagesWidget = new QWidget();
     QGridLayout *grid = ui->gridLayout;
