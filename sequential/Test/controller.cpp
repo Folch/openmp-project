@@ -176,12 +176,13 @@ void Controller::loadHist(QList<QString> *list) {
     struct timespec start, finish;
     double elapsed;
 
+    int len = list->size();
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    for (id = 1; id <= list->size(); ++id) {
+    for (id = 1; id <= len; ++id) {
         histograms[id-1] = getHistogram(id);
     }
-
+    clock_gettime(CLOCK_MONOTONIC, &finish);
     elapsed = (finish.tv_sec - start.tv_sec);
     elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
 

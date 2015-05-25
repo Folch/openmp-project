@@ -187,10 +187,14 @@ void Controller::loadHist(QList<QString> *list) {
     double elapsed;
 
     clock_gettime(CLOCK_MONOTONIC, &start);
+    int len = list->size();
 
-    for (id = 1; id <= list->size(); ++id) {
-        histograms[id-1] = getHistogram(id);
+    #pragma omp parallel for
+    for (int i = 1; i <= len; ++i ){
+        histograms[i-1] = getHistogram(i);
     }
+    id = len +1;
+
     clock_gettime(CLOCK_MONOTONIC, &finish);
     elapsed = (finish.tv_sec - start.tv_sec);
     elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
