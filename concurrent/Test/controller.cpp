@@ -109,28 +109,37 @@ void Controller::insertImages(QList<QString> *list) {
 
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    #pragma omp parallel for
-    for(i = 0; i < len; i++){
+    #pragma omp parallel
+    {
+        #pragma omp for
+        for(i = 0; i < len; i++){
+            #pragma omp task untied
+            {
+                int source = open(list->at(i).toStdString().data(), O_RDONLY, 0);
+                QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
+                int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT, 0644);
 
-        int source = open(list->at(i).toStdString().data(), O_RDONLY, 0);
-        QString path = IMG_PATH + QString("img_") + IdToString(id+i) + ".jpg";
-        int dest = open(path.toStdString().data(), O_WRONLY | O_CREAT, 0644);
+                // struct required, rationale: function stat() exists also
+                struct stat stat_source;
+                fstat(source, &stat_source);
 
-        // struct required, rationale: function stat() exists also
-        struct stat stat_source;
-        fstat(source, &stat_source);
+                sendfile(dest, source, 0, stat_source.st_size);
 
-        sendfile(dest, source, 0, stat_source.st_size);
-
-        close(source);
-        close(dest);
-
-        // Calcular l'histograma
-        h = createHistogram(list->at(i));
-        histograms[id+i-1] = h;
-        // Guardar l'histograma a 'hist/'
-        storeHistogram(id+i, h);
-
+                close(source);
+                close(dest);
+            }
+            #pragma omp taskwait
+            {
+                #pragma omp task untied
+                {
+                    // Calcular l'histograma
+                    h = createHistogram(list->at(i));
+                    histograms[id+i-1] = h;
+                    // Guardar l'histograma a 'hist/'
+                    storeHistogram(id+i, h);
+                }
+            }
+        }
     }
     clock_gettime(CLOCK_MONOTONIC, &finish);
 
